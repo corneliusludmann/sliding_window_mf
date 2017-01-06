@@ -1,4 +1,4 @@
-package org.ludmann.matrix_factorization;
+package org.ludmann.recsys.data.rating;
 
 import com.google.auto.value.AutoValue;
 

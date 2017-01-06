@@ -1,24 +1,29 @@
-package org.ludmann.matrix_factorization;
+package org.ludmann.recsys.data.rating_matrix;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
+import org.ludmann.recsys.data.rating.UserItemRating;
 
 /**
  * @author Cornelius A. Ludmann
  *
  */
-class RatingMatrixImpl implements RatingMatrix {
+class MutableRatingMatrixImpl extends AbstractRatingMatrix implements MutableRatingMatrix {
 
 	private final Map<Long, Map<Long, UserItemRating>> userRatingsMap = new HashMap<>();
 	private final Map<Long, Map<Long, UserItemRating>> itemRatingsMap = new HashMap<>();
+
+	@Override
+	protected Map<Long, Map<Long, UserItemRating>> userRatingsMap() {
+		return userRatingsMap;
+	}
+
+	@Override
+	protected Map<Long, Map<Long, UserItemRating>> itemRatingsMap() {
+		return itemRatingsMap;
+	}
 
 	@Override
 	public Optional<UserItemRating> add(final UserItemRating userItemRating) {
@@ -84,80 +89,6 @@ class RatingMatrixImpl implements RatingMatrix {
 	}
 
 	@Override
-	public Optional<UserItemRating> rating(final long user, final long item) {
-		final Map<Long, UserItemRating> ratings = userRatingsMap.get(user);
-		if (ratings == null) {
-			return Optional.empty();
-		}
-		return Optional.ofNullable(ratings.get(item));
-	}
-
-	@Override
-	public Collection<UserItemRating> ratingsOfUser(final long user) {
-		final Map<Long, UserItemRating> ratings = userRatingsMap.get(user);
-		return ratings.values();
-	}
-
-	@Override
-	public Collection<UserItemRating> ratingsForItem(final long item) {
-		final Map<Long, UserItemRating> ratings = itemRatingsMap.get(item);
-		return ratings.values();
-	}
-
-	@Override
-	public Set<Long> users() {
-		return userRatingsMap.keySet();
-	}
-
-	@Override
-	public Set<Long> items() {
-		return itemRatingsMap.keySet();
-	}
-
-	@Override
-	public String asAsciiMatrix() {
-		final StringBuilder sb = new StringBuilder();
-		createAsciiMatrix(sb::append);
-		return sb.toString();
-	}
-
-	@Override
-	public void createAsciiMatrix(final Consumer<String> asciiConsumer) {
-
-		final String horizontalDelim = " | ";
-		final String noValuePlaceholder = "--";
-
-		final List<String> usersAsString = users().stream().map(String::valueOf).collect(Collectors.toList());
-		final int maxUserLength = Math.max(5, usersAsString.stream().mapToInt(x -> x.length()).max().orElse(0));
-
-		final List<String> itemsAsString = items().stream().map(String::valueOf).collect(Collectors.toList());
-		final int maxItemLength = itemsAsString.stream().mapToInt(x -> x.length()).max().orElse(0);
-
-		// header
-		asciiConsumer.accept(StringUtils.repeat(" ", maxItemLength));
-		asciiConsumer.accept(usersAsString.stream().map(x -> String.format("%" + maxUserLength + "s", x))
-				.collect(Collectors.joining(horizontalDelim, horizontalDelim, horizontalDelim)));
-		asciiConsumer.accept(System.lineSeparator());
-
-		for (final long item : items()) {
-			asciiConsumer.accept(String.format("%" + maxItemLength + "s" + horizontalDelim, item));
-			for (final long user : users()) {
-				final double rating = rating(user, item).orElse(UserItemRating.nan()).rating();
-				if (Double.isNaN(rating)) {
-					asciiConsumer.accept(StringUtils.repeat(" ", maxUserLength - noValuePlaceholder.length()));
-					asciiConsumer.accept(noValuePlaceholder);
-					asciiConsumer.accept(horizontalDelim);
-				} else {
-					final String ratingString = String.format("%.2f", rating);
-					asciiConsumer.accept(String.format("%" + maxUserLength + "s" + horizontalDelim, ratingString));
-				}
-			}
-			asciiConsumer.accept(System.lineSeparator());
-		}
-
-	}
-
-	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -177,7 +108,7 @@ class RatingMatrixImpl implements RatingMatrix {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final RatingMatrixImpl other = (RatingMatrixImpl) obj;
+		final MutableRatingMatrixImpl other = (MutableRatingMatrixImpl) obj;
 		if (itemRatingsMap == null) {
 			if (other.itemRatingsMap != null) {
 				return false;
@@ -193,11 +124,6 @@ class RatingMatrixImpl implements RatingMatrix {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("RatingMatrixImpl [userRatingsMap=%s, itemRatingsMap=%s]", userRatingsMap, itemRatingsMap);
 	}
 
 }

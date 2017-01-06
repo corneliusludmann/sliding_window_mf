@@ -3,7 +3,7 @@ package org.ludmann.sliding_window_mf.io;
 import java.io.BufferedReader;
 import java.util.function.Consumer;
 
-import org.ludmann.matrix_factorization.UserItemRating;
+import org.ludmann.recsys.data.rating.UserItemRating;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

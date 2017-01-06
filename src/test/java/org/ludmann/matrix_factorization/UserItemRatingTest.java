@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.ludmann.recsys.data.rating.UserItemRating;
 
 /**
  * @author Cornelius A. Ludmann
