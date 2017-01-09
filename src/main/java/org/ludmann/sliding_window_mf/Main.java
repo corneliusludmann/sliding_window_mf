@@ -70,10 +70,6 @@ public class Main {
 	}
 
 	private static void readFromStdIn(final String delim, final Consumer<UserItemRating> consumer) throws IOException {
-		// System.out.println("Reading data from std input.");
-		// System.out.println("user (long)" + delim + " item (long)" + delim + "
-		// rating (double)");
-		// System.out.println("Blank line exits.");
 		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));) {
 			ReadUserItemRatingCsv.of(bufferedReader, consumer, delim).run();
 		}
