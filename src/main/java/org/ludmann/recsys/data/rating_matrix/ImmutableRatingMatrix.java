@@ -18,15 +18,17 @@ import com.google.common.collect.ImmutableMap.Builder;
 public abstract class ImmutableRatingMatrix extends AbstractRatingMatrix {
 
 	public static ImmutableRatingMatrix of(final AbstractRatingMatrix abstractRatingMatrix) {
+		int size = 0;
 		final Builder<Long, Map<Long, UserItemRating>> userRatingsMapBuilder = ImmutableMap.builder();
 		for (final Entry<Long, Map<Long, UserItemRating>> entry : abstractRatingMatrix.userRatingsMap().entrySet()) {
 			userRatingsMapBuilder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
+			++size;
 		}
 		final Builder<Long, Map<Long, UserItemRating>> itemRatingsMapBuilder = ImmutableMap.builder();
 		for (final Entry<Long, Map<Long, UserItemRating>> entry : abstractRatingMatrix.itemRatingsMap().entrySet()) {
 			userRatingsMapBuilder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
 		}
-		return new AutoValue_ImmutableRatingMatrix(userRatingsMapBuilder.build(), itemRatingsMapBuilder.build());
+		return new AutoValue_ImmutableRatingMatrix(userRatingsMapBuilder.build(), itemRatingsMapBuilder.build(), size);
 	}
 
 	public static ImmutableRatingMatrix of(final RatingMatrix ratingMatrix) {
@@ -39,5 +41,8 @@ public abstract class ImmutableRatingMatrix extends AbstractRatingMatrix {
 
 	@Override
 	protected abstract Map<Long, Map<Long, UserItemRating>> itemRatingsMap();
+
+	@Override
+	public abstract int size();
 
 }

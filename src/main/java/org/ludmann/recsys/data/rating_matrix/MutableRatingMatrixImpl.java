@@ -14,6 +14,7 @@ class MutableRatingMatrixImpl extends AbstractRatingMatrix implements MutableRat
 
 	private final Map<Long, Map<Long, UserItemRating>> userRatingsMap = new HashMap<>();
 	private final Map<Long, Map<Long, UserItemRating>> itemRatingsMap = new HashMap<>();
+	private int size = 0;
 
 	@Override
 	protected Map<Long, Map<Long, UserItemRating>> userRatingsMap() {
@@ -32,6 +33,9 @@ class MutableRatingMatrixImpl extends AbstractRatingMatrix implements MutableRat
 		final Optional<UserItemRating> oldItemRatingsMap = addToItemRatingsMap(userItemRating);
 		if (!oldItemRatingsMap.equals(oldUserRatingsMap)) {
 			throw new AssertionError("!oldItemRatingsMap.equals(oldUserRatingsMap)");
+		}
+		if (!oldItemRatingsMap.isPresent()) {
+			++size;
 		}
 		return oldUserRatingsMap;
 	}
@@ -61,6 +65,9 @@ class MutableRatingMatrixImpl extends AbstractRatingMatrix implements MutableRat
 		if (!removedUserRatingsMap.equals(removedItemRatingsMap)) {
 			throw new AssertionError("!removedUserRatingsMap.equals(removedItemRatingsMap)");
 		}
+		if (!removedUserRatingsMap.isPresent()) {
+			--size;
+		}
 		return removedUserRatingsMap;
 	}
 
@@ -89,10 +96,16 @@ class MutableRatingMatrixImpl extends AbstractRatingMatrix implements MutableRat
 	}
 
 	@Override
+	public int size() {
+		return size;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((itemRatingsMap == null) ? 0 : itemRatingsMap.hashCode());
+		result = prime * result + size;
 		result = prime * result + ((userRatingsMap == null) ? 0 : userRatingsMap.hashCode());
 		return result;
 	}
@@ -114,6 +127,9 @@ class MutableRatingMatrixImpl extends AbstractRatingMatrix implements MutableRat
 				return false;
 			}
 		} else if (!itemRatingsMap.equals(other.itemRatingsMap)) {
+			return false;
+		}
+		if (size != other.size) {
 			return false;
 		}
 		if (userRatingsMap == null) {

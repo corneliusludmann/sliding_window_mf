@@ -40,4 +40,6 @@ public interface RatingMatrix extends Iterable<UserItemRating> {
 	String asAsciiMatrix();
 
 	void createAsciiMatrix(Consumer<String> asciiConsumer);
+
+	int size();
 }
