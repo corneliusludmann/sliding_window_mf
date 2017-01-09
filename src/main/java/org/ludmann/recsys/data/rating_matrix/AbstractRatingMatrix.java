@@ -107,6 +107,11 @@ abstract class AbstractRatingMatrix implements RatingMatrix {
 				.collect(Collectors.joining(horizontalDelim, horizontalDelim, horizontalDelim)));
 		asciiConsumer.accept(System.lineSeparator());
 
+		asciiConsumer.accept(StringUtils.repeat("-", maxItemLength));
+		asciiConsumer.accept(StringUtils.repeat("-",
+				usersAsString.size() * (maxUserLength + horizontalDelim.length()) + horizontalDelim.length()));
+		asciiConsumer.accept(System.lineSeparator());
+
 		for (final long item : items()) {
 			asciiConsumer.accept(String.format("%" + maxItemLength + "s" + horizontalDelim, item));
 			for (final long user : users()) {
