@@ -21,4 +21,7 @@ public interface MutableRatingMatrix extends RatingMatrix {
 
 	Optional<UserItemRating> remove(long user, long item);
 
+	default Optional<UserItemRating> remove(final UserItemRating rating) {
+		return remove(rating.user(), rating.item());
+	}
 }

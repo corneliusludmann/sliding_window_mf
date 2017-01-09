@@ -27,6 +27,14 @@ public interface RatingMatrix extends Iterable<UserItemRating> {
 		return ImmutableRatingMatrix.of(ratingMatrix);
 	}
 
+	public static MutableRatingMatrix mutableRatingMatrixOf(final RatingMatrix ratingMatrix) {
+		if (ratingMatrix instanceof MutableRatingMatrix) {
+			return (MutableRatingMatrix) ratingMatrix;
+		} else {
+			return new MutableRatingMatrixImpl(ratingMatrix);
+		}
+	}
+
 	Optional<UserItemRating> rating(long user, long item);
 
 	Collection<UserItemRating> ratingsOfUser(long user);
@@ -42,4 +50,5 @@ public interface RatingMatrix extends Iterable<UserItemRating> {
 	void createAsciiMatrix(Consumer<String> asciiConsumer);
 
 	int size();
+
 }

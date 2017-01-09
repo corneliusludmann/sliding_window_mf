@@ -12,9 +12,24 @@ import org.ludmann.recsys.data.rating.UserItemRating;
  */
 class MutableRatingMatrixImpl extends AbstractRatingMatrix implements MutableRatingMatrix {
 
-	private final Map<Long, Map<Long, UserItemRating>> userRatingsMap = new HashMap<>();
-	private final Map<Long, Map<Long, UserItemRating>> itemRatingsMap = new HashMap<>();
-	private int size = 0;
+	private final Map<Long, Map<Long, UserItemRating>> userRatingsMap;
+	private final Map<Long, Map<Long, UserItemRating>> itemRatingsMap;
+	private int size;
+
+	MutableRatingMatrixImpl() {
+		userRatingsMap = new HashMap<>();
+		itemRatingsMap = new HashMap<>();
+		size = 0;
+	}
+
+	MutableRatingMatrixImpl(final RatingMatrix ratingMatrix) {
+		userRatingsMap = new HashMap<>();
+		itemRatingsMap = new HashMap<>();
+		size = 0;
+		for (final UserItemRating userItemRating : ratingMatrix) {
+			add(userItemRating);
+		}
+	}
 
 	@Override
 	protected Map<Long, Map<Long, UserItemRating>> userRatingsMap() {
